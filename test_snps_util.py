@@ -22,4 +22,6 @@ def test_complementary_strand_success(sequence, result):
 )
 def test_complementary_strand_failure(incorrect_sequence):
     """Deve estourar um TypeError se uma string não for passada."""
-    pytest.raises(TypeError, complementary_strand, incorrect_sequence)
+    with pytest.raises(TypeError) as excinfo:
+        complementary_strand(incorrect_sequence)
+        assert 'Apenas strings podem ser passadas como argumento.' == str(excinfo.value)
