@@ -9,7 +9,8 @@ Clone o repositório em seu computador e rode os seguintes comandos:
 
 ### Windows
 ```shell
-$ cd python-tests
+$ cd python-tutoriais
+$ git checkout testes-2
 $ python3 -m venv venv
 $ \venv\Scripts\activate
 $ python3 -m pytest .
@@ -17,7 +18,8 @@ $ python3 -m pytest .
 
 ### Linux
 ```shell
-$ cd python-tests
+$ cd python-tutoriais
+$ git checkout testes-2
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ python3 -m pytest .
