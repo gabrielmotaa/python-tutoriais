@@ -4,6 +4,7 @@ import tempfile
 import pytest
 
 from snps_util import SNPFile
+from snps_util.files import _read_ftdna
 
 
 class TestSNPFile:
@@ -14,7 +15,7 @@ class TestSNPFile:
         _, temp_csv = tempfile.mkstemp()
         with open(temp_csv, 'w') as f:
             f.writelines([
-                "RSID,CHROMSOME,POSITION,RESULT\n",
+                "RSID,CHROMOSOME,POSITION,RESULT\n",
                 "rs123,1,12345,GG\n",
                 "rs4312,2,453231,AT\n",
             ])
@@ -31,7 +32,7 @@ class TestSNPFile:
         _, temp_csv = tempfile.mkstemp()
         with open(temp_csv, 'w') as f:
             f.writelines([
-                "RSID,CHROMSOME,POSITION,RESULT\n",
+                "RSID,CHROMOSOME,POSITION,RESULT\n",
                 "rs123,1,12345,GG\n",
                 "rs4312,2,453231,AT\n",
             ])
@@ -48,7 +49,7 @@ class TestSNPFile:
         _, temp_csv = tempfile.mkstemp()
         with open(temp_csv, 'w') as f:
             f.writelines([
-                "RSID,CHROMSOME,POSITION,RESULT\n",
+                "RSID,CHROMOSOME,POSITION,RESULT\n",
                 "rs123,1,12345,GG\n",
                 "rs4312,2,453231,AT\n",
             ])
@@ -59,3 +60,22 @@ class TestSNPFile:
             assert snp_file.get_genotype('rs123', complementary=True) == 'CC'
         finally:
             os.unlink(temp_csv)
+
+
+def test_read_ftdna():
+    # criar arquivo temporário como csv ThermoFisher
+    _, temp_csv = tempfile.mkstemp()
+    with open(temp_csv, 'w') as f:
+        f.writelines([
+            "RSID,CHROMOSOME,POSITION,RESULT\n",
+            "rs123,1,12345,GG\n",
+            "rs4312,2,453231,AT\n",
+        ])
+
+    data = _read_ftdna(temp_csv)
+
+    try:
+        assert next(data) == {'rsid': 'rs123', 'chrom': '1', 'pos': '12345', 'result': 'GG'}
+        assert next(data) == {'rsid': 'rs4312', 'chrom': '2', 'pos': '453231', 'result': 'AT'}
+    finally:
+        os.unlink(temp_csv)
