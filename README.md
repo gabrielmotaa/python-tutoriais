@@ -16,6 +16,7 @@ $ cd python-tutoriais
 $ git checkout testes-6
 $ python3 -m venv venv
 $ \venv\Scripts\activate
+$ python3 -m pip install -r requirements.txt
 $ python3 -m pytest . -v
 ```
 
@@ -25,5 +26,6 @@ $ cd python-tutoriais
 $ git checkout testes-6
 $ python3 -m venv venv
 $ source venv/bin/activate
+$ python3 -m pip install -r requirements.txt
 $ python3 -m pytest . -v
 ```
