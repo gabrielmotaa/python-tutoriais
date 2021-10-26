@@ -1,4 +1,5 @@
 import csv
+from pathlib import Path
 
 from .helpers import complementary_strand
 
@@ -6,11 +7,22 @@ from .helpers import complementary_strand
 class SNPFile:
     def __init__(self, filename):
         self.filename = filename
+        self._reader = self._discover_vendor()
+
+    def _discover_vendor(self):
+        extension = Path(self.filename).suffix
+
+        if extension == '.csv':
+            return _read_ftdna
+        elif extension == '.txt':
+            return _read_23andme
+        else:
+            raise Exception(f'Arquivo {self.filename} desconhecido.')
 
     def get_genotype(self, rsid, complementary=False):
         result = None
 
-        for data in _read_ftdna(self.filename):
+        for data in self._reader(self.filename):
             if rsid == data['rsid']:
                 result = data['result']
                 break
@@ -33,4 +45,18 @@ def _read_ftdna(filename):
                 'chrom': row['CHROMOSOME'],
                 'pos': row['POSITION'],
                 'result': row['RESULT'],
+            }
+
+
+def _read_23andme(filename):
+    with open(filename) as f:
+        reader = csv.reader(f, delimiter='\t')
+        for row in reader:
+            if row[0].startswith('#'):
+                continue
+            yield {
+                'rsid': row[0],
+                'chrom': row[1],
+                'pos': row[2],
+                'result': row[3],
             }
