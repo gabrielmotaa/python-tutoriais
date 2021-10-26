@@ -5,6 +5,7 @@ from .helpers import complementary_strand
 
 
 def _read_ftdna(filename):
+    """Gerador que retorna linhas de um arquivo FTDNA"""
     with open(filename) as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -17,6 +18,7 @@ def _read_ftdna(filename):
 
 
 def _read_23andme(filename):
+    """Gerador que retorna linhas de um arquivo 23andme"""
     with open(filename) as f:
         reader = csv.reader(f, delimiter='\t')
         for row in reader:
@@ -30,6 +32,7 @@ def _read_23andme(filename):
             }
 
 
+# Podemos adicionar novos readers sem ter que mexer em SNPFile
 _readers = {
     '.csv': _read_ftdna,
     '.txt': _read_23andme,
@@ -37,11 +40,13 @@ _readers = {
 
 
 class SNPFile:
+    """Processa um arquivo de SNPs e retorna informações."""
     def __init__(self, filename):
         self.filename = filename
         self._reader = self._discover_vendor()
 
     def _discover_vendor(self):
+        """Descobre o vendedor a partir da extensão do arquivo."""
         extension = Path(self.filename).suffix
         reader = _readers.get(extension)
         if reader is None:
@@ -50,6 +55,11 @@ class SNPFile:
         return reader
 
     def get_genotype(self, rsid, complementary=False):
+        """Retorna o genótipo de um rsid que exista no arquivo.
+
+        É possível retornar na fita complementar. Caso não encontre
+        um genótipo levanta uma exceção.
+        """
         result = None
 
         for data in self._reader(self.filename):
