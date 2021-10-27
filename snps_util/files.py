@@ -10,37 +10,38 @@ def _read_ftdna(filename):
         reader = csv.DictReader(f)
         for row in reader:
             yield {
-                'rsid': row['RSID'],
-                'chrom': row['CHROMOSOME'],
-                'pos': row['POSITION'],
-                'result': row['RESULT'],
+                "rsid": row["RSID"],
+                "chrom": row["CHROMOSOME"],
+                "pos": row["POSITION"],
+                "result": row["RESULT"],
             }
 
 
 def _read_23andme(filename):
     """Gerador que retorna linhas de um arquivo 23andme"""
     with open(filename) as f:
-        reader = csv.reader(f, delimiter='\t')
+        reader = csv.reader(f, delimiter="\t")
         for row in reader:
-            if row[0].startswith('#'):
+            if row[0].startswith("#"):
                 continue
             yield {
-                'rsid': row[0],
-                'chrom': row[1],
-                'pos': row[2],
-                'result': row[3],
+                "rsid": row[0],
+                "chrom": row[1],
+                "pos": row[2],
+                "result": row[3],
             }
 
 
 # Podemos adicionar novos readers sem ter que mexer em SNPFile
 _readers = {
-    '.csv': _read_ftdna,
-    '.txt': _read_23andme,
+    ".csv": _read_ftdna,
+    ".txt": _read_23andme,
 }
 
 
 class SNPFile:
     """Processa um arquivo de SNPs e retorna informações."""
+
     def __init__(self, filename):
         self.filename = filename
         self._reader = self._discover_vendor()
@@ -50,7 +51,7 @@ class SNPFile:
         extension = Path(self.filename).suffix
         reader = _readers.get(extension)
         if reader is None:
-            raise Exception(f'Arquivo {self.filename} desconhecido.')
+            raise Exception(f"Arquivo {self.filename} desconhecido.")
 
         return reader
 
@@ -63,8 +64,8 @@ class SNPFile:
         result = None
 
         for data in self._reader(self.filename):
-            if rsid == data['rsid']:
-                result = data['result']
+            if rsid == data["rsid"]:
+                result = data["result"]
                 break
 
         if result is None:

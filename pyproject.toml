@@ -1,0 +1,8 @@
+[pytest.ini_options]
+addopts = "--cov=snps_util --cov-report html"
+testspaths = ["tests"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = ["snps_file", "tests"]
