@@ -91,6 +91,7 @@ exclude = __init__.py
 E por fim, coverage tem `.coveragerc`:
 ```ini
 [run]
+branch = True
 omit = tests/*
 ```
 
